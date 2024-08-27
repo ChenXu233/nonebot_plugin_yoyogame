@@ -4,12 +4,27 @@ from typing import Union
 from nonebot import on_command
 from nonebot.log import logger
 from nonebot.typing import T_State
+from nonebot.plugin import PluginMetadata
 from nonebot.matcher import Matcher
 from nonebot.permission import SUPERUSER
 from nonebot.adapters.onebot.v11 import Bot, MessageEvent
 
 from .yoyoutils import *
 from .config import *
+
+__plugin_meta__ = PluginMetadata(
+    name="悠悠",
+    description="我他妈当场直接开悠",
+    usage=info,
+    homepage="https://github.com/ChenXu233/nonebot_plugin_yoyogame",
+    type="application",
+    # supported_adapters=inherit_supported_adapters(
+    #     "nonebot_plugin_chatrecorder", "nonebot_plugin_saa", "nonebot_plugin_alconna"
+    # ),
+    # TODO: 增加插件依赖
+    config=Config,
+    # extra={"orm_version_location": migrations},
+)
 
 yoyogame = on_command(cmd ='悠一把',aliases={"yoyo","Yo","悠悠", "悠" },priority=4,block=True)
 
