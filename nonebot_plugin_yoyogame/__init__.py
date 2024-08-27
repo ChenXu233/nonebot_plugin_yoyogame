@@ -21,7 +21,7 @@ __plugin_meta__ = PluginMetadata(
     supported_adapters={"~onebot.v11"},
     # TODO: 增加插件依赖
     config=Config,
-    # extra={"orm_version_location": migrations},
+    extra={},
 )
 
 yoyogame = on_command(cmd ='悠一把',aliases={"yoyo","Yo","悠悠", "悠" },priority=4,block=True)
