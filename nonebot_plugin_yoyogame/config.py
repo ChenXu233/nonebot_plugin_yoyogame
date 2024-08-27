@@ -1,9 +1,8 @@
-from nonebot import get_driver
+from nonebot import get_driver,get_plugin_config
 from pydantic import BaseModel, Extra
 
 
 class Config(BaseModel, extra=Extra.ignore):
     pass
 
-global_config = get_driver().config
-plugin_config = Config(**global_config.dict())
+plugin_config = get_plugin_config(Config)
