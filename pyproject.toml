@@ -1,6 +1,6 @@
 [project]
 name = "nonebot-plugin-yoyogame"
-version = "0.1.1"
+version = "0.1.2"
 description = "一个基于Nonebot开发的悠悠小游戏"
 authors = [
     {name = "ChenXu233", email = "Woyerpa@outlook.com"},
@@ -17,8 +17,8 @@ readme = "README.md"
 license = {text = "GPL"}
 
 [build-system]
-requires = ["pdm-backend"]
-build-backend = "pdm.backend"
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
 
 
 [tool.pdm]
