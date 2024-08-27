@@ -18,9 +18,7 @@ __plugin_meta__ = PluginMetadata(
     usage=info,
     homepage="https://github.com/ChenXu233/nonebot_plugin_yoyogame",
     type="application",
-    # supported_adapters=inherit_supported_adapters(
-    #     "nonebot_plugin_chatrecorder", "nonebot_plugin_saa", "nonebot_plugin_alconna"
-    # ),
+    supported_adapters={"~onebot.v11"},
     # TODO: 增加插件依赖
     config=Config,
     # extra={"orm_version_location": migrations},
