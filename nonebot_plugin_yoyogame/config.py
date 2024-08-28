@@ -1,8 +1,9 @@
-from nonebot import get_driver,get_plugin_config
-from pydantic import BaseModel, Extra
+from nonebot import get_driver, get_plugin_config
+from pydantic import BaseModel
 
-class ScopedConfig(BaseModel):
-    ...
+
+class ScopedConfig(BaseModel): ...
+
 
 class Config(BaseModel):
     yoyogame: ScopedConfig = ScopedConfig()

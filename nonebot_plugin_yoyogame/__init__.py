@@ -1,13 +1,21 @@
-from typing import Union
+from nonebot import require
+
+require("nonebot_plugin_alconna")
+require("nonebot_plugin_cesaa")
 
 
 from nonebot import on_command
 from nonebot.log import logger
 from nonebot.typing import T_State
-from nonebot.plugin import PluginMetadata
+from nonebot.plugin import PluginMetadata, inherit_supported_adapters
 from nonebot.matcher import Matcher
-from nonebot.permission import SUPERUSER
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent
+from nonebot.adapters import Event,Bot
+
+import nonebot_plugin_saa as saa
+from nonebot_plugin_alconna import (
+    Alconna,
+    on_alconna,
+)
 
 from .yoyoutils import *
 from .config import *
@@ -18,29 +26,40 @@ __plugin_meta__ = PluginMetadata(
     usage=info,
     homepage="https://github.com/ChenXu233/nonebot_plugin_yoyogame",
     type="application",
-    supported_adapters={"~onebot.v11"},
-    # TODO: 增加插件依赖
+    supported_adapters=inherit_supported_adapters(
+        "nonebot_plugin_saa", "nonebot_plugin_alconna"
+    ),
     config=Config,
     extra={},
 )
 
-yoyogame = on_command(cmd ='悠一把',aliases={"yoyo","Yo","悠悠", "悠" },priority=4,block=True)
+yoyogame = on_alconna(
+    Alconna("悠一把"),
+    aliases={"yoyo", "Yo", "悠悠", "悠"},
+    use_cmd_start=True,
+    priority=4,
+    block=True,
+)
+yoyogame = on_command(
+    cmd="悠一把", aliases={"yoyo", "Yo", "悠悠", "悠"}, priority=4, block=True
+)
+
 
 @yoyogame.handle()
-async def _responser(matcher:Matcher,event:MessageEvent,bot:Bot,state:T_State):
-    
+async def _responser(matcher: Matcher, event: Event, bot: Bot, state: T_State):
+
     player = Player()
     computer = Computer()
     computer.set_opl(player)
-    game = Game(p1=player,p2=computer)
-    state['game'] = game
-    await matcher.send(info)
-    
+    game = Game(p1=player, p2=computer)
+    state["game"] = game
+    await saa.Text(info).finish()
 
-@yoyogame.receive(id='1')
-async def _processer(matcher:Matcher,event:MessageEvent,bot:Bot,state:T_State):
+
+@yoyogame.receive(id="1")
+async def _processer(matcher: Matcher, event: Event, bot: Bot, state: T_State):
     cmd = event.get_plaintext()
-    game:Game = state['game']
+    game: Game = state["game"]
     if cmd == "rule":
         await matcher.reject(rule)
     elif cmd == "info":
@@ -51,12 +70,17 @@ async def _processer(matcher:Matcher,event:MessageEvent,bot:Bot,state:T_State):
     elif cmd in signals:
         result, tip = game.update(signal=cmd)
         if result == 1:
-            await matcher.finish(str(game)+f"\n本回合你出了：{game.p1.signal}, 电脑出了：{game.p2.signal}\n"+tip)
+            await saa.Text(
+                str(game)
+                + f"\n本回合你出了：{game.p1.signal}, 电脑出了：{game.p2.signal}\n"
+                + tip
+            ).reject(reply=True)
         else:
-            await matcher.reject(str(game)+f"\n本回合你出了：{game.p1.signal}, 电脑出了：{game.p2.signal}\n"+tip)
-            
+            await saa.Text(
+                str(game)
+                + f"\n本回合你出了：{game.p1.signal}, 电脑出了：{game.p2.signal}\n"
+                + tip
+            ).reject(reply=True)
+
     else:
-        await matcher.reject("输入不合法，请重新输入！")
-    
-    
-        
+        await saa.Text("输入不合法，请重新输入！").reject(reply=True)
