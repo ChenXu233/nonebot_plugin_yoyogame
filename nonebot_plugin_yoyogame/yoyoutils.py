@@ -217,7 +217,8 @@ def play_game():
     game = Game(player, computer)
     while True:
         print(game)
-        result, tip = game.update()
+        player.signal = input("请输入你的出招：")
+        result, tip = game.update(player.signal)
         print(f"本回合你出了：{player.signal}, 电脑出了：{computer.signal}")
         print(tip)
         if result:
