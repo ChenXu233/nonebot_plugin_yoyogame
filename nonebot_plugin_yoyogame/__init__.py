@@ -1,17 +1,21 @@
 from nonebot import require
 
+require("nonebot_plugin_session")
 require("nonebot_plugin_alconna")
 require("nonebot_plugin_cesaa")
+
 
 
 from nonebot import on_command
 from nonebot.log import logger
 from nonebot.typing import T_State
 from nonebot.plugin import PluginMetadata, inherit_supported_adapters
+from nonebot.params import Depends
 from nonebot.matcher import Matcher
 from nonebot.adapters import Event,Bot
 
 import nonebot_plugin_saa as saa
+from nonebot_plugin_session import Session,extract_session
 from nonebot_plugin_alconna import (
     Alconna,
     on_alconna,
@@ -46,20 +50,22 @@ yoyogame = on_command(
 
 
 @yoyogame.handle()
-async def _responser(matcher: Matcher, event: Event, bot: Bot, state: T_State):
+async def _responser(event: Event, bot: Bot, state: T_State,session: Session = Depends(extract_session)):
 
+    gameid = str(session.id1) + str(session.id2)
     player = Player()
     computer = Computer()
     computer.set_opl(player)
     game = Game(p1=player, p2=computer)
-    state["game"] = game
-    await saa.Text(info).finish()
+    state[gameid] = game
+    await saa.Text(info).send()
 
 
-@yoyogame.receive(id="1")
-async def _processer(matcher: Matcher, event: Event, bot: Bot, state: T_State):
+@yoyogame.receive("game")
+async def _processer(matcher: Matcher, event: Event, bot: Bot, state: T_State,session: Session = Depends(extract_session)):
     cmd = event.get_plaintext()
-    game: Game = state["game"]
+    gameid = str(session.id1) + str(session.id2)
+    game: Game = state[gameid]
     if cmd == "rule":
         await matcher.reject(rule)
     elif cmd == "info":
@@ -74,7 +80,7 @@ async def _processer(matcher: Matcher, event: Event, bot: Bot, state: T_State):
                 str(game)
                 + f"\n本回合你出了：{game.p1.signal}, 电脑出了：{game.p2.signal}\n"
                 + tip
-            ).reject(reply=True)
+            ).finish(reply=True)
         else:
             await saa.Text(
                 str(game)
